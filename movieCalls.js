@@ -1,8 +1,8 @@
 const axios = require('axios')
-const ADAPTER_URL = 'https://movie-adapter.herokuapp.com/getMovie'
+const MOVIE_ADAPTER = 'https://movie-adapter.herokuapp.com/getMovie'
 
 exports.getMovieInfo = function (id, res) {
-	axios.get(ADAPTER_URL, {
+	axios.get(MOVIE_ADAPTER, {
     params: {
       id: id,
     }
