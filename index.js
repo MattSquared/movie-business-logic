@@ -11,3 +11,7 @@ app.listen(PORT, () => {
 app.get('/getMovieInfo', (req, res, next) => {
   movieCalls.getMovieInfo(req.query.id, res)
 })
+
+app.post('/sendMail', (req, res, next) => {
+  movieCalls.sendMail(req.query.mail, res)
+})
