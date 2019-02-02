@@ -23,7 +23,7 @@ exports.sendMail = function (mail, res) {
     .request({
       'Messages': [{
         'From': {
-          'Email': 'cinamsbot@mail.com',
+          'Email': 'cinemasbot@email.it',
           'Name': 'CinemasBot'
         },
         'To': [{
