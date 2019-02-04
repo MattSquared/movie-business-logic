@@ -24,12 +24,12 @@ exports.sendMail = function (user, mail, body, type, res) {
 
   switch (type) {
     case SHOW_TIMES:
-      subject = body.times.name + ' showing summary'
+      subject = body.times.film_name + ' showing summary'
       textPart = getShowTimes(body.times, body.cinema).replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')
       htmlPart = getShowTimes(body.times, body.cinema)
       break
     case SHOWS_TIMES:
-      subject = body.cinema.name + ' showing summary'
+      subject = body.cinema.cinema_name + ' showing summary'
       textPart = getShowsTimes(body.shows, body.cinema).replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')
       htmlPart = getShowsTimes(body.shows, body.cinema)
       break
@@ -95,7 +95,7 @@ function getShowsTimes (shows, cinema) {
 
 function header (cinema) {
   return '' +
-    '<b>' + cinema.name + '</b><br>' +
+    '<b>' + cinema.cinema_name + '</b><br>' +
     '<i>' + cinema.address + ', ' + cinema.city + '</i><br><br>' +
     '<img src="' + cinema.map_image + '" /><br><br>'
 }
