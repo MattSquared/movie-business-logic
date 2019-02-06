@@ -4,6 +4,7 @@ const secretKey = require('./key').secretKey
 const mailjet = require('node-mailjet').connect(publicKey, secretKey)
 
 const MOVIE_ADAPTER = 'https://movie-adapter.herokuapp.com/getMovie'
+// const MOVIE_ADAPTER = 'http://localhost:5000/getMovie'
 
 exports.getMovieInfo = function (id, res) {
   axios.get(MOVIE_ADAPTER, {
@@ -13,51 +14,64 @@ exports.getMovieInfo = function (id, res) {
   }).then(function (response) {
     res.json(response.data)
   }).catch(function (error) {
+    let answer = {
+      response: {
+        status: 500,
+        error: 'Internal Business-Logic Error'
+      },
+      data: {}
+    }
+    res.json(answer)
     console.log(error)
   })
 }
 
 exports.sendMail = function (user, mail, body, type, res) {
-  let subject = ''
-  let textPart = ''
-  let htmlPart = ''
+  if (body === undefined) {
+    res.json({ response: { status: 400, error: 'Bad Request' }})
+  } else {
+    let subject = ''
+    let textPart = ''
+    let htmlPart = ''
 
-  switch (type) {
-    case SHOW_TIMES:
-      subject = body.times.film_name + ' showing summary'
-      textPart = getShowTimes(body.times, body.cinema).replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')
-      htmlPart = getShowTimes(body.times, body.cinema)
-      break
-    case SHOWS_TIMES:
-      subject = body.cinema.cinema_name + ' showing summary'
-      textPart = getShowsTimes(body.shows, body.cinema).replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')
-      htmlPart = getShowsTimes(body.shows, body.cinema)
-      break
-  }
+    switch (type) {
+      case SHOW_TIMES:
+        subject = body.times.film_name + ' showing summary'
+        textPart = getShowTimes(body.times, body.cinema).replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')
+        htmlPart = getShowTimes(body.times, body.cinema)
+        break
+      case SHOWS_TIMES:
+        subject = body.cinema.cinema_name + ' showing summary'
+        textPart = getShowsTimes(body.shows, body.cinema).replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')
+        htmlPart = getShowsTimes(body.shows, body.cinema)
+        break
+    }
 
-  let request = mailjet
-    .post('send', { 'version': 'v3.1' })
-    .request({
-      'Messages': [{
-        'From': {
-          'Email': 'cinemasbot@email.it',
-          'Name': 'CinemasBot'
-        },
-        'To': [{
-          'Email': mail,
-          'Name': user
-        }],
-        'Subject': subject,
-        'TextPart': textPart,
-        'HTMLPart': htmlPart
-      }]
+    let request = mailjet
+      .post('send', { 'version': 'v3.1' })
+      .request({
+        'Messages': [{
+          'From': {
+            'Email': 'cinemasbot@email.it',
+            'Name': 'CinemasBot'
+          },
+          'To': [{
+            'Email': mail,
+            'Name': user
+          }],
+          'Subject': subject,
+          'TextPart': textPart,
+          'HTMLPart': htmlPart
+        }]
+      })
+
+    request.then((result) => {
+      res.json({ response: { status: 200, message: 'Mail Sent Successfully' }})
+    }).catch((err) => {
+      res.json({ response: { status: 500, message: 'Mail Service Error' }})
+      console.log(err)
     })
-
-  request.then((result) => {
-    res.json(result.body)
-  }).catch((err) => {
-    console.log(err.statusCode)
-  })
+  }
 }
 
 function getShowTimes (times, cinema) {
@@ -106,7 +120,6 @@ function movieTitle (show) {
 
 function standard (show) {
   let htmlText = '<b>Showings Type:</b><br><i>Standard</i><br>'
-
   show.showings.Standard.forEach(function (item) {
     htmlText += item + '<br>'
   })
