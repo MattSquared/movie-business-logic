@@ -36,9 +36,9 @@ exports.sendMail = function (user, mail, body, type, res) {
 
     switch (type) {
       case SHOW_TIMES:
-        subject = body.times.film_name + ' showing summary'
-        textPart = getShowTimes(body.times, body.cinema).replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')
-        htmlPart = getShowTimes(body.times, body.cinema)
+        subject = body.times.showtimes.film_name + ' showing summary'
+        textPart = getShowTimes(body.times.showtimes, body.cinema).replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')
+        htmlPart = getShowTimes(body.times.showtimes, body.cinema)
         break
       case SHOWS_TIMES:
         subject = body.cinema.cinema_name + ' showing summary'
@@ -80,7 +80,7 @@ function getShowTimes (times, cinema) {
   htmlText += movieTitle(times)
   htmlText += standard(times)
 
-  if (times.showings['3D'] !== undefined) {
+  if (times.showings['3d'] !== undefined) {
     htmlText += threeD(times)
   }
 
@@ -120,7 +120,7 @@ function movieTitle (show) {
 
 function standard (show) {
   let htmlText = '<b>Showings Type:</b><br><i>Standard</i><br>'
-  show.showings.Standard.forEach(function (item) {
+  show.showings.standard.forEach(function (item) {
     htmlText += item + '<br>'
   })
 
@@ -129,7 +129,7 @@ function standard (show) {
 
 function threeD (show) {
   let htmlText = '<br><i>3D</i><br>'
-  show.showings['3D'].forEach(function (item) {
+  show.showings['3d'].forEach(function (item) {
     htmlText += item + '<br>'
   })
 
