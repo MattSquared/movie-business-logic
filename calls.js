@@ -145,7 +145,7 @@ function threeD (show) {
 }
 
 function days (show) {
-  let htmlText = '<br><b>Days:</b><br>'
+  let htmlText = '<br><b>Show times are valid for the following days:</b><br>'
   show.show_dates.forEach(function (item) {
     htmlText += item + '<br>'
   })
