@@ -78,7 +78,11 @@ function getShowTimes (times, cinema) {
   let htmlText = header(cinema)
   
   htmlText += movieTitle(times)
-  htmlText += standard(times)
+  htmlText += '<b>Showings Type:</b><br>'
+
+  if (times.showings.standard !== undefined) {
+    htmlText += standard(times)
+  }
 
   if (times.showings['3d'] !== undefined) {
     htmlText += threeD(times)
@@ -94,9 +98,13 @@ function getShowsTimes (shows, cinema) {
 
   shows.forEach(function (show) {
     htmlText += movieTitle(show)
-    htmlText += standard(show)
+    htmlText += '<b>Showings Type:</b><br>'
     
-    if (show.showings['3D'] !== undefined) {
+    if (show.showings.standard !== undefined) {
+      htmlText += standard(show)
+    }
+    
+    if (show.showings['3d'] !== undefined) {
       htmlText += threeD(show)
     }
     
@@ -119,7 +127,7 @@ function movieTitle (show) {
 }
 
 function standard (show) {
-  let htmlText = '<b>Showings Type:</b><br><i>Standard</i><br>'
+  let htmlText = '<br><i>Standard</i><br>'
   show.showings.standard.forEach(function (item) {
     htmlText += item + '<br>'
   })
