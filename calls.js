@@ -4,8 +4,12 @@ const secretKey = require('./key').secretKey
 const mailjet = require('node-mailjet').connect(publicKey, secretKey)
 
 const MOVIE_ADAPTER = 'https://movie-adapter.herokuapp.com/getMovie'
-// const MOVIE_ADAPTER = 'http://localhost:5000/getMovie'
 
+/**
+ * Return movie information by its id
+ * @param {string} id - movie id takes from http://imdb.com
+ * @param {Object} res - response object
+ */
 exports.getMovieInfo = function (id, res) {
   axios.get(MOVIE_ADAPTER, {
     params: {
@@ -26,6 +30,14 @@ exports.getMovieInfo = function (id, res) {
   })
 }
 
+/**
+ * Send mail with information of showigs of a cinema or times of a movie (depends by type)
+ * @param {string} user - Telegram username
+ * @param {string} mail - mail address
+ * @param {Object} body - mail content
+ * @param {int} type - if function is called by mailShowTimes or mailShowsTimes
+ * @param {Object} res - response object
+ */
 exports.sendMail = function (user, mail, body, type, res) {
   if (body === undefined) {
     res.json({ response: { status: 400, error: 'Bad Request' }})
@@ -74,6 +86,11 @@ exports.sendMail = function (user, mail, body, type, res) {
   }
 }
 
+/**
+ * Write mail for movie times
+ * @param {Object} times - times information
+ * @param {Object} cinema - cinema information
+ */
 function getShowTimes (times, cinema) {
   let htmlText = header(cinema)
   
@@ -93,6 +110,11 @@ function getShowTimes (times, cinema) {
   return htmlText
 }
 
+/**
+ * Write mail for cinema showings 
+ * @param {Object[]} shows - shows information
+ * @param {Object} cinema - cinema info
+ */
 function getShowsTimes (shows, cinema) {
   let htmlText = header(cinema)
 
@@ -115,6 +137,10 @@ function getShowsTimes (shows, cinema) {
   return htmlText
 }
 
+/**
+ * Write header with cinema information
+ * @param {Object} cinema - cinema info
+ */
 function header (cinema) {
   return '' +
     '<b>' + cinema.cinema_name + '</b><br>' +
@@ -122,10 +148,18 @@ function header (cinema) {
     '<img src="' + cinema.map_image + '" /><br><br>'
 }
 
+/**
+ * Write movie title
+ * @param {Object} show - show information
+ */
 function movieTitle (show) {
   return '<b>' + show.film_name.toUpperCase() + '</b><br><br>'
 }
 
+/**
+ * Write standard show times
+ * @param {Object} show - show information
+ */
 function standard (show) {
   let htmlText = '<br><i>Standard</i><br>'
   show.showings.standard.forEach(function (item) {
@@ -135,6 +169,10 @@ function standard (show) {
   return htmlText
 }
 
+/**
+ * Write 3D show times
+ * @param {Object} show - show information
+ */
 function threeD (show) {
   let htmlText = '<br><i>3D</i><br>'
   show.showings['3d'].forEach(function (item) {
@@ -144,6 +182,10 @@ function threeD (show) {
   return htmlText
 }
 
+/**
+ * Write show times dates
+ * @param {Object} show - show information
+ */
 function days (show) {
   let htmlText = '<br><b>Show times are valid for the following days:</b><br>'
   show.show_dates.forEach(function (item) {
